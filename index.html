@@ -87,7 +87,6 @@ input{
   cursor:pointer;
 }
 
-/* ===== IMAGE + TEXT BUTTON ===== */
 .img-btn{
   display:flex;
   align-items:center;
@@ -118,7 +117,7 @@ input{
 <div class="card">
   <img src="room.jpg">
   <h3>RESERVASI / TANYA TANYA</h3>
-  <p>Isi form ini untuk reservasi / tanya tanya</p>
+  <p>Isi boleh, tidak juga tetap bisa chat</p>
 
   <input id="reservasi-nama" placeholder="Nama Lengkap">
   <input id="reservasi-nomor" placeholder="Nomor WhatsApp">
@@ -148,12 +147,12 @@ input{
   <span>OFFICIAL WEBSITE</span>
 </a>
 
-<a class="img-btn" href="https://www.tiktok.com/@by.sajeeva?_r=1&_t=ZS-93Yvk7oK91J">
+<a class="img-btn" href="https://www.tiktok.com/@by.sajeeva">
   <img src="btn-tiktok.png">
   <span>TIKTOK</span>
 </a>
 
-<a class="img-btn" href="https://www.instagram.com/by.sajeeva?igsh=MW5zdXhqejdicmM5Zw==">
+<a class="img-btn" href="https://www.instagram.com/by.sajeeva">
   <img src="btn-instagram.png">
   <span>INSTAGRAM</span>
 </a>
@@ -175,28 +174,35 @@ const ENDPOINT = "https://script.google.com/macros/s/AKfycbws3VuCepc41CyQ1UGitJo
 const SOURCE = "threads";
 
 function sendWA(button){
-  const nama = document.getElementById(button+"-nama").value.trim();
-  const nomor = document.getElementById(button+"-nomor").value.trim();
 
-  if(!nama || !nomor){
-    alert("Nama dan Nomor WhatsApp wajib diisi");
-    return;
-  }
+  const namaField = document.getElementById(button+"-nama");
+  const nomorField = document.getElementById(button+"-nomor");
 
+  const nama = namaField ? namaField.value.trim() : "";
+  const nomor = nomorField ? nomorField.value.trim() : "";
+
+  const finalNama = nama !== "" ? nama : "-";
+  const finalNomor = nomor !== "" ? nomor : "-";
+
+  // ===== TRACKING =====
   fetch(ENDPOINT,{
     method:"POST",
     body:JSON.stringify({
       source: SOURCE,
       button: button,
-      nama: nama,
-      nomor: nomor
+      nama: finalNama,
+      nomor: finalNomor
     })
   }).finally(()=>{
+
+    // ===== PESAN WA =====
     const pesan =
-      `Halo Sajeeva, saya ${nama}. Saya lihat postingan di ${SOURCE}. ` +
+      `Halo Sajeeva, Saya lihat postingan di threads. ` +
       `Boleh tanya info ketersediaan kamar dan fasilitas nya?`;
 
-    const wa = `https://wa.me/6285888588954?text=${encodeURIComponent(pesan)}`;
+    const wa =
+      `https://wa.me/6285888588954?text=${encodeURIComponent(pesan)}`;
+
     window.location.href = wa;
   });
 }
